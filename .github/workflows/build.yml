@@ -1,0 +1,40 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+
+env:
+  REGISTRY_IMAGE: jeremyatdockerhub/cullen
+  TAG: 0.0.1
+
+jobs:
+  build-push-single:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+          - linux/amd64
+          - linux/arm/v6
+          - linux/arm/v7
+          - linux/arm64
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v4
+      -
+        name: Dagger builds
+        uses: dagger/dagger-for-github@v5
+        with:
+          verb: call 
+          module: .
+          args: build-push --platform ${{ matrix.platform }}
+  pull-push-multi:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Dagger push
+        run: |
+          echo foo
