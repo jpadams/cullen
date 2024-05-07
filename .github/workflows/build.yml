@@ -8,6 +8,7 @@ on:
 env:
   IMAGE: jeremyatdockerhub/cullen
   TAG: 0.0.1
+  PLATFORMS: "linux/amd64,linux/arm/v6,linux/arm/v7,linux/arm64"
 
 jobs:
   build-push-single:
@@ -44,4 +45,4 @@ jobs:
         with:
           verb: call
           module: .
-          args: multi-push --image ${{ env.IMAGE }} --tag ${{ env.TAG }}
+          args: multi-push --image ${{ env.IMAGE }} --platforms ${{ env.PLATFORMS }} --tag ${{ env.TAG }}
