@@ -14,9 +14,30 @@
 
 package main
 
+import (
+	"context"
+	"fmt"
+)
+
 type Multi struct{}
 
 // Build and push an image of a certain platform
-func (m *Multi) BuildPush(platform string) *Container {
-	return dag.Container().From("alpine:latest").WithExec([]string{"echo", platform})
+func (m *Multi) BuildPush(ctx context.Context, platform string, image string, tag string) (string, error) {
+	return dag.Container(ContainerOpts{Platform: Platform(platform)}).
+		From("alpine:latest").
+		WithExec([]string{"echo", platform}).
+		Publish(ctx, fmt.Sprintf("ttl.sh/%v-%v:%v", image, platform, tag))
+}
+
+// Push a multi-arch image
+func (m *Multi) MultiPush(ctx context.Context, image string, platforms []string, tag string) (string, error) {
+	ctrs := []*Container{} //empty slice of Containers
+	for _, platform := range platforms {
+		ctrs = append(ctrs, dag.Container().From(fmt.Sprintf("ttl.sh/%v-%v:%v", image, platform, tag)))
+	}
+	fmt.Println(ctrs)
+	return dag.Container().Publish(ctx, fmt.Sprintf("ttl.sh/%v:%v", image, tag),
+		ContainerPublishOpts{
+			PlatformVariants: ctrs,
+		})
 }
