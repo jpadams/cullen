@@ -32,6 +32,7 @@ jobs:
           module: .
           args: build-push --platform ${{ matrix.platform }}
   pull-push-multi:
+    needs: build-push-single
     runs-on: ubuntu-latest
     steps:
       -
