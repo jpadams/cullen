@@ -26,11 +26,9 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
       -
-        name: Dagger builds
+        name: dagger call build-push
         uses: dagger/dagger-for-github@v5
         with:
-          verb: call
-          module: .
           args: build-push --platform ${{ matrix.platform }} --image ${{ env.IMAGE }} --tag ${{ env.TAG }}
   pull-push-multi:
     needs: build-push-single
@@ -40,9 +38,7 @@ jobs:
         name: Checkout
         uses: actions/checkout@v4
       -
-        name: Dagger builds
+        name: dagger call multi-push
         uses: dagger/dagger-for-github@v5
         with:
-          verb: call
-          module: .
           args: multi-push --image ${{ env.IMAGE }} --platforms ${{ env.PLATFORMS }} --tag ${{ env.TAG }}
