@@ -33,9 +33,9 @@ func (m *Multi) BuildPush(ctx context.Context, platform string, image string, ta
 func (m *Multi) MultiPush(ctx context.Context, image string, platforms []string, tag string) (string, error) {
 	ctrs := []*Container{} //empty slice of Containers
 	for _, platform := range platforms {
+		platform := platform
 		ctrs = append(ctrs, dag.Container().From(fmt.Sprintf("ttl.sh/%v-%v:%v", image, platform, tag)))
 	}
-	fmt.Println(ctrs)
 	return dag.Container().Publish(ctx, fmt.Sprintf("ttl.sh/%v:%v", image, tag),
 		ContainerPublishOpts{
 			PlatformVariants: ctrs,
